@@ -1,0 +1,14 @@
+# Start the monitoring stack
+ git clone https://github.com/arunvel1988/slo-laboratory
+ cd slo-laboratory
+docker-compose up -d prometheus
+docker-compose up -d grafana
+docker-compose up -d pyrra-api
+docker-compose up -d pyrra-filesystem
+
+# Start the REST API
+docker-compose up -d rest-api 
+
+# Run load tests against the REST API
+docker-compose run --rm k6
+
