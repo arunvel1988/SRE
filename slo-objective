@@ -12,3 +12,29 @@ docker-compose up -d rest-api
 # Run load tests against the REST API
 docker-compose run --rm k6
 
+
+
+
+
+docker-compose stop database
+
+docker-compose exec database psql -U admin -d fms
+
+INSERT INTO fms.drivers (operator_id, first_name, last_name, license_number, date_of_birth, hire_date)
+     SELECT (random() * ((select max(operator_id) from fms.operators) - 1) + 1)::INT,
+            faker.first_name(),
+            faker.last_name(),
+            'License--' || id,
+            faker.date_this_century()::DATE,
+            faker.date_this_decade()::DATE
+       FROM generate_series(1, 1000000) AS s(id);
+
+
+
+##############################
+
+# revert
+DELETE FROM fms.drivers
+      WHERE driver_id > 300;
+
+
