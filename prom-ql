@@ -1,0 +1,176 @@
+sum(
+  rate(
+    http_server_requests_seconds_count{
+      uri=~"/operators.*",
+      status=~"5.."
+    }[1d]
+  )
+) or vector(0)
+
+
+
+
+
+#########################
+
+sum(
+  rate(
+    http_server_requests_seconds_count{
+      uri=~"/operators.*"
+    }[1d]
+  )
+) or vector(0)
+
+#########################
+
+apiVersion: pyrra.dev/v1alpha1
+kind: ServiceLevelObjective
+metadata:
+  name: rest-api-availability
+  namespace: rest-api
+  labels:
+    prometheus: k8s
+    role: alert-rules
+spec:
+  target: '99.0'
+  window: 28d
+  indicator:
+    ratio:
+      errors:
+        metric: http_server_requests_seconds_count{uri=~"/operators.*", status=~"5.."}
+      total:
+        metric: http_server_requests_seconds_count{uri=~"/operators.*"}
+
+
+        #####################
+
+
+sum(
+  rate(
+    http_server_requests_seconds_count{
+      uri=~"/operators.*",
+      status=~"2..",
+      le="0.05"
+    }[1d]
+  )
+) or vector(0)
+
+
+
+###############
+
+
+sum(
+  rate(
+    http_server_requests_seconds_count{
+      uri=~"/operators.*"
+      status=~"2..",
+    }[1d]
+  )
+) or vector(0)
+
+#################
+
+apiVersion: pyrra.dev/v1alpha1
+kind: ServiceLevelObjective
+metadata:
+  name: rest-api-latency
+  namespace: rest-api
+  labels:
+    prometheus: k8s
+    role: alert-rules
+spec:
+  target: '99.0'
+  window: 28d
+  indicator:
+    latency:
+      success:
+        metric: http_server_requests_seconds_bucket{uri=~"/operators.*", status=~"2..", le="0.05"}
+      total:
+        metric: http_server_requests_seconds_count{uri=~"/operators.*", status=~"2.."}
+#######################
+
+sum(
+  rate(
+    http_server_requests_seconds_count{
+      status=~"5..",
+      uri=~"/operators.*"
+    }[window]
+  )
+)
+/
+sum(
+  rate(
+    http_server_requests_seconds_count{
+      uri=~"/operators.*"
+    }[window]
+  )
+)
+
+########################################################
+
+
+(
+  sum(
+    rate(
+      http_server_requests_seconds_count{
+        status=~"5..",
+        uri=~"/operators.*"
+      }[5m]
+    )
+  )
+  /
+  sum(
+    rate(
+      http_server_requests_seconds_count{
+        uri=~"/operators.*"
+      }[5m]
+    )
+  )
+) > (13.44 * (1 – 099))
+
+and
+
+(
+  sum(
+    rate(
+      http_server_requests_seconds_count{
+        status=~"5..",
+        uri=~"/operators.*"
+      }[1h]
+    )
+  )
+  /
+  sum(
+    rate(
+      http_server_requests_seconds_count{
+        uri=~"/operators.*"
+      }[1h]
+    )
+  )
+) > (13.44 * (1 – 099))
+
+#########################################################
+
+
+apiVersion: pyrra.dev/v1alpha1
+kind: ServiceLevelObjective
+metadata:
+  name: rest-api-latency
+  namespace: rest-api
+  labels:
+    prometheus: k8s
+    role: alert-rules
+spec:
+  target: '99.0'
+  window: 28d
+  indicator:
+    latency:
+      success:
+        metric: http_server_requests_seconds_bucket{uri=~"/operators.*", status=~"2..", le="0.05"}
+      total:
+        metric: http_server_requests_seconds_count{uri=~"/operators.*", status=~"2.."}
+
+################################################################
+
+
