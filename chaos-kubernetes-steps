@@ -9,6 +9,9 @@ helm install chaos litmuschaos/litmus --namespace=litmus --set portal.frontend.s
 
 kubectl get svc -n litmus
 
+kubectl port-forward svc/chaos-litmus-frontend-service -n litmus 9091:9091 --address 0.0.0.0
+
+
 Username: admin
 Password: litmus
 
