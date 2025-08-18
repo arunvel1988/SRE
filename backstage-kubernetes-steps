@@ -5,3 +5,9 @@ npx @backstage/create-app@latest
 cd my-backstage-app
 
 
+
+yarn install 
+
+
+yarn tsc
+
